@@ -37,11 +37,11 @@
 
 @media screen and (max-width: 768px) {
   .main {
-    margin-top: 5rem;
+    margin-top: 3rem;
   }
 
   .content {
-    margin-top: 6rem;
+    margin-top: 4rem;
     align-items: center;
   }
 
@@ -50,6 +50,6 @@
   }
 
   .btn {
-    margin-top: 1rem;
+    margin: 1rem;
   }
 }

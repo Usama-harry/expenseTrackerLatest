@@ -1,12 +1,16 @@
-import { Fragment } from "react";
+import { useNavigate } from "react-router-dom";
 
+import AnimatedOpacityDiv from "../../Components/UI/AnimatedOpacityDiv/AnimatedOpacityDiv";
 import Button from "../../Components/UI/Button/Button";
 import trackingGif from "../../assets/tracking.gif";
 import classes from "./Landing.module.css";
 
 const Landing = (props) => {
+  const navigate = useNavigate();
+
+  const switchToAuthPage = () => navigate("/auth");
   return (
-    <Fragment>
+    <AnimatedOpacityDiv>
       <div className={`row ${classes.main}`}>
         <div className={`col-md-6`}>
           <img
@@ -23,10 +27,17 @@ const Landing = (props) => {
             Track your expenses like never before. Keep record of your all
             expenses
           </p>
-          <Button className={classes.btn}>Login / Register</Button>
+          <Button
+            properties={{
+              onClick: switchToAuthPage,
+            }}
+            className={classes.btn}
+          >
+            Login / Register
+          </Button>
         </div>
       </div>
-    </Fragment>
+    </AnimatedOpacityDiv>
   );
 };
 

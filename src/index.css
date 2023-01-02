@@ -13,6 +13,11 @@ body {
   --primary-color: #810ca8;
   --secondary-color: #253237;
 
+  /* Border Radius */
+  --radius-normal: 10px;
+  --radius-low: 5px;
+  --radius-high: 15px;
+
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",

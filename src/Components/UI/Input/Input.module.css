@@ -1,0 +1,15 @@
+.input {
+  width: 100%;
+  height: 40px;
+
+  background-color: var(--secondary-color);
+  border: none;
+  outline: none;
+  padding-left: 0.5rem;
+  color: white;
+  border-radius: var(--radius-low);
+}
+
+.input:last-child {
+  margin-bottom: 0;
+}
