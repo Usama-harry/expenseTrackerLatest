@@ -39,10 +39,13 @@ export const signUp = (
   email,
   password,
   confirmPassword,
-  setIsLoading
+  setIsLoading,
+  setAlert
 ) => {
   return async (dispatch) => {
-    if (!isSignUpInputsAreValid(name, email, password, confirmPassword)) {
+    if (
+      !isSignUpInputsAreValid(name, email, password, confirmPassword, setAlert)
+    ) {
       return;
     }
     setIsLoading(true);
@@ -63,7 +66,10 @@ export const signUp = (
 
       if (!response.ok) {
         setIsLoading(false);
-        console.log(responseData.message);
+        setAlert({
+          message: responseData.message,
+          isError: true,
+        });
         return;
       }
 
@@ -79,20 +85,18 @@ export const signUp = (
       );
     } catch (error) {
       setIsLoading(false);
-      console.log("error");
+      setAlert({
+        message: "An error occured",
+        isError: true,
+      });
       return;
     }
   };
 };
 
-export const signIn = (
-  email,
-  password,
-
-  setIsLoading
-) => {
+export const signIn = (email, password, setIsLoading, setAlert) => {
   return async (dispatch) => {
-    if (!isSignInInputsAreValid(email, password)) {
+    if (!isSignInInputsAreValid(email, password, setAlert)) {
       return;
     }
     setIsLoading(true);
@@ -112,7 +116,10 @@ export const signIn = (
 
       if (!response.ok) {
         setIsLoading(false);
-        console.log(responseData.message);
+        setAlert({
+          message: responseData.message,
+          isError: true,
+        });
         return;
       }
 
@@ -128,14 +135,17 @@ export const signIn = (
       );
     } catch (error) {
       setIsLoading(false);
-      console.log("error");
+      setAlert({
+        message: "An error occured",
+        isError: true,
+      });
       return;
     }
   };
 };
 
 export const autoLogin = () => {
-  return async (dispatch) => {
+  return (dispatch) => {
     const userId = localStorage.getItem("userId");
     const token = localStorage.getItem("token");
     const expiry = localStorage.getItem("expiry");
@@ -160,34 +170,58 @@ export const autoLogin = () => {
   };
 };
 
-const isSignUpInputsAreValid = (name, email, password, confirmPassword) => {
+const isSignUpInputsAreValid = (
+  name,
+  email,
+  password,
+  confirmPassword,
+  setAlert
+) => {
   if (!name || name.length < 3) {
-    console.log("Name must have 3 characters");
+    setAlert({
+      message: "Name must have 3 characters",
+      isError: true,
+    });
     return false;
   }
   if (!email || !email.includes("@")) {
-    console.log("Invalid email");
+    setAlert({
+      message: "Invalid email",
+      isError: true,
+    });
     return false;
   }
   if (!password || password.length < 8) {
-    console.log("Name must be 8 characters long");
+    setAlert({
+      message: "Name must be 8 characters long",
+      isError: true,
+    });
     return false;
   }
   if (password !== confirmPassword) {
-    console.log("Password do not match");
+    setAlert({
+      message: "Password do not match",
+      isError: true,
+    });
     return false;
   }
 
   return true;
 };
 
-const isSignInInputsAreValid = (email, password) => {
+const isSignInInputsAreValid = (email, password, setAlert) => {
   if (!email || !email.includes("@")) {
-    console.log("Invalid email");
+    setAlert({
+      message: "Invalid email",
+      isError: true,
+    });
     return false;
   }
   if (!password || password.length < 8) {
-    console.log("Name must be 8 characters long");
+    setAlert({
+      message: "Name must be 8 characters long",
+      isError: true,
+    });
     return false;
   }
   return true;

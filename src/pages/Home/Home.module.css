@@ -12,7 +12,7 @@
 .menu-icon {
   font-size: 1.5rem;
   cursor: pointer;
-  transition: transform 0.2s linear;
+  transition: transform 0.1s linear;
 }
 
 .menu-icon:hover {
@@ -22,18 +22,53 @@
 .title {
   font-weight: 300;
   font-size: 2rem;
-  letter-spacing: 0.3rem;
+  letter-spacing: 0.1rem;
 }
 
-.login-status {
+.login-status__col {
   text-align: right;
 }
 
-.login-status span {
+.login-status__container {
+  width: 30%;
+  min-width: 120px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-left: auto;
   background-color: var(--primary-color);
+  padding: 0.3rem 0.5rem;
   border-radius: 3px;
   cursor: pointer;
+}
+
+.profile-icon {
+  font-size: 0.7rem;
+}
+
+.login-status__col span {
   color: white;
   font-weight: 500;
-  padding: 0.3rem 0.5rem;
+  font-size: 0.7rem;
+}
+
+.arrow-icon {
+  font-size: 0.7rem;
+}
+
+.popper_item {
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.2s linear !important;
+}
+
+.popper_item:hover {
+  transform: scale(1.1) translateX(0.4rem);
+}
+
+.popper_item__icon {
+  font-size: 1rem;
 }

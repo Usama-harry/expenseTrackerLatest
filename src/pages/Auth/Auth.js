@@ -2,11 +2,15 @@ import { useState, useRef, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import LoadingSpinner from "../../Components/UI/LoadingSpinner/LoadingSpinner";
 import { signUp, signIn, autoLogin } from "../../store/authSlice";
 import AnimatedOpacityDiv from "../../Components/UI/AnimatedOpacityDiv/AnimatedOpacityDiv";
+
+//UI
+import AlertDialog from "../../Components/UI/AlertDialog/AlertDialog";
+import LoadingSpinner from "../../Components/UI/LoadingSpinner/LoadingSpinner";
 import Button from "../../Components/UI/Button/Button";
 import Input from "../../Components/UI/Input/Input";
+//Styles
 import classes from "./Auth.module.css";
 
 const AuthModes = {
@@ -18,6 +22,7 @@ const AuthModes = {
 const Auth = (props) => {
   const [authMode, setAuthMode] = useState(AuthModes.login);
   const [isLoading, setIsLoading] = useState(false);
+  const [alert, setAlert] = useState(null);
 
   const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
@@ -33,10 +38,12 @@ const Auth = (props) => {
   const isRegisterMode = authMode === AuthModes.register;
   const isResetMode = authMode === AuthModes.reset;
 
+  //Trying login from local storage
   useEffect(() => {
     dispatch(autoLogin());
   }, [dispatch]);
 
+  //Redirecting not authorized users
   useEffect(() => {
     if (isAuthenticated) navigate("/home");
   }, [isAuthenticated, navigate]);
@@ -53,10 +60,12 @@ const Auth = (props) => {
       password = passwordRef.current.value;
       confirmPassword = confirmPasswordRef.current.value;
 
-      dispatch(signUp(name, email, password, confirmPassword, setIsLoading));
+      dispatch(
+        signUp(name, email, password, confirmPassword, setIsLoading, setAlert)
+      );
     } else if (isLoginMode) {
       password = passwordRef.current.value;
-      dispatch(signIn(email, password, setIsLoading));
+      dispatch(signIn(email, password, setIsLoading, setAlert));
     }
   };
 
@@ -68,6 +77,13 @@ const Auth = (props) => {
             className={`col-lg-4 col-md-6 offset-lg-4 offset-md-3 ${classes.col}`}
           >
             <form onSubmit={submitFormHandler}>
+              {alert && (
+                <AlertDialog
+                  onClick={() => setAlert(null)}
+                  message={alert.message}
+                  isError={alert.isError}
+                ></AlertDialog>
+              )}
               {isRegisterMode && (
                 <Input
                   properties={{
