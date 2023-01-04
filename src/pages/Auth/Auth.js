@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useState, useRef, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import LoadingSpinner from "../../Components/UI/LoadingSpinner/LoadingSpinner";
-import { signUp, signIn } from "../../store/authSlice";
+import { signUp, signIn, autoLogin } from "../../store/authSlice";
 import AnimatedOpacityDiv from "../../Components/UI/AnimatedOpacityDiv/AnimatedOpacityDiv";
 import Button from "../../Components/UI/Button/Button";
 import Input from "../../Components/UI/Input/Input";
@@ -18,16 +19,27 @@ const Auth = (props) => {
   const [authMode, setAuthMode] = useState(AuthModes.login);
   const [isLoading, setIsLoading] = useState(false);
 
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
   const nameRef = useRef();
   const emailRef = useRef();
   const passwordRef = useRef();
   const confirmPasswordRef = useRef();
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const isLoginMode = authMode === AuthModes.login;
   const isRegisterMode = authMode === AuthModes.register;
   const isResetMode = authMode === AuthModes.reset;
+
+  useEffect(() => {
+    dispatch(autoLogin());
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (isAuthenticated) navigate("/home");
+  }, [isAuthenticated, navigate]);
 
   const submitFormHandler = (event) => {
     event.preventDefault();
@@ -98,7 +110,7 @@ const Auth = (props) => {
                   className={classes.input}
                 ></Input>
               )}
-              {isLoginMode && (
+              {/* {isLoginMode && (
                 <button
                   onClick={() => {
                     setAuthMode(
@@ -109,7 +121,7 @@ const Auth = (props) => {
                 >
                   Forget password?
                 </button>
-              )}
+              )} */}
               {isLoading ? (
                 <LoadingSpinner
                   className={classes["loading-spinner"]}

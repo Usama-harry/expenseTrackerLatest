@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import AnimatedOpacityDiv from "../../Components/UI/AnimatedOpacityDiv/AnimatedOpacityDiv";
 import Button from "../../Components/UI/Button/Button";
 import trackingGif from "../../assets/tracking.gif";
+
 import classes from "./Landing.module.css";
 
 const Landing = (props) => {
@@ -10,7 +11,7 @@ const Landing = (props) => {
 
   const switchToAuthPage = () => navigate("/auth");
   return (
-    <AnimatedOpacityDiv>
+    <AnimatedOpacityDiv className={`container`}>
       <div className={`row ${classes.main}`}>
         <div className={`col-md-6`}>
           <img

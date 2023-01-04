@@ -59,20 +59,22 @@ export const signUp = (
         }),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
         setIsLoading(false);
-        console.log("error response not ok");
+        console.log(responseData.message);
         return;
       }
 
-      const responseData = await response.json();
-
       setIsLoading(false);
+      autoLogout(responseData.expiry, dispatch);
+      const expiry = new Date(Date.now() + responseData.expiry);
       return dispatch(
         authActions.login({
           userId: responseData.userId,
           token: responseData.token,
-          expiry: responseData.expiry,
+          expiry: expiry.toISOString(),
         })
       );
     } catch (error) {
@@ -106,22 +108,22 @@ export const signIn = (
         }),
       });
 
+      const responseData = await response.json();
+
       if (!response.ok) {
         setIsLoading(false);
-        console.log("error response not ok");
+        console.log(responseData.message);
         return;
       }
 
-      const responseData = await response.json();
-
-      console.log(responseData);
-
       setIsLoading(false);
+      autoLogout(responseData.expiry, dispatch);
+      const expiry = new Date(Date.now() + responseData.expiry);
       return dispatch(
         authActions.login({
           userId: responseData.userId,
           token: responseData.token,
-          expiry: responseData.expiry,
+          expiry: expiry.toISOString(),
         })
       );
     } catch (error) {
@@ -129,6 +131,32 @@ export const signIn = (
       console.log("error");
       return;
     }
+  };
+};
+
+export const autoLogin = () => {
+  return async (dispatch) => {
+    const userId = localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    const expiry = localStorage.getItem("expiry");
+
+    if (!userId || !token || !expiry) return;
+
+    const currentTime = new Date(Date.now());
+    const expiryTime = new Date(expiry);
+
+    if (currentTime > expiryTime) return; //Expired token
+
+    const remaingExpiryTime = expiryTime - currentTime; //milliseconds
+
+    autoLogout(remaingExpiryTime, dispatch);
+    return dispatch(
+      authActions.login({
+        userId: userId,
+        token: token,
+        expiry: expiry,
+      })
+    );
   };
 };
 
@@ -163,6 +191,12 @@ const isSignInInputsAreValid = (email, password) => {
     return false;
   }
   return true;
+};
+
+const autoLogout = (milliseconds, dispatch) => {
+  setTimeout(() => {
+    dispatch(authActions.logout());
+  }, milliseconds);
 };
 export const authActions = authSlice.actions;
 
