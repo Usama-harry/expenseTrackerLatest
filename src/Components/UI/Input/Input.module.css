@@ -9,6 +9,11 @@
   color: white;
   border-radius: var(--radius-low);
 }
+input:-webkit-autofill {
+  -webkit-text-fill-color: white;
+  background-color: var(--secondary-color);
+  transition: background-color 5000s ease-in-out 0s;
+}
 
 .input:last-child {
   margin-bottom: 0;

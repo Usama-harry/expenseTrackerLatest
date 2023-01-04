@@ -6,7 +6,6 @@
   border-radius: var(--radius-low);
   color: white;
   font-weight: bold;
-  transition: 300ms;
 }
 
 .btn:hover {

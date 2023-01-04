@@ -38,6 +38,7 @@
 @media screen and (max-width: 768px) {
   .main {
     margin-top: 3rem;
+    text-align: center;
   }
 
   .content {
