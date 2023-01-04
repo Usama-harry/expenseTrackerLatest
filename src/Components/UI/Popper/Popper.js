@@ -14,8 +14,8 @@ const MyPopper = (props) => {
       {({ TransitionProps }) => (
         <Fade {...TransitionProps} timeout={350}>
           <div className={classes.container}>
-            {props.children.map((child) => (
-              <div onClick={props.onClick}>{child} </div>
+            {props.children.map((child, index) => (
+              <div key={index}>{child} </div>
             ))}
           </div>
         </Fade>

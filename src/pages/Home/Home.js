@@ -1,90 +1,109 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBars,
-  faUser,
-  faChevronDown,
-  faSignOut,
-} from "@fortawesome/free-solid-svg-icons";
 
-import { authActions } from "../../store/authSlice";
-import MyPopper from "../../Components/UI/Popper/Popper";
+import { loadData } from "../../store/dataSlice";
+import MainHeader from "../../Components/MainHeader/MainHeader";
+import ExpenseTotalItem from "../../Components/ExpenseTotalItem/ExpenseTotalItem";
+import LoadingSpinner from "../../Components/UI/LoadingSpinner/LoadingSpinner";
 import AnimatedOpacityDiv from "../../Components/UI/AnimatedOpacityDiv/AnimatedOpacityDiv";
 import classes from "./Home.module.css";
 
 const Home = (props) => {
-  const [showPopper, setShowPopper] = useState(false);
-  const [popperElement, setPopperElement] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [alert, setAlert] = useState(null);
+  const [date, setDate] = useState(new Date());
+
+  const [todayAmount, setTodayAmount] = useState(0);
+  const [monthAmount, setMonthAmount] = useState(0);
+  const [yearAmount, setYearAmount] = useState(0);
+
+  const dispatch = useDispatch();
 
   const authState = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+  const dataState = useSelector((state) => state.data);
+  const dateRef = useRef();
   const navigate = useNavigate();
 
-  const togglePopper = (event) => {
-    if (showPopper) {
-      setPopperElement(null);
-    } else {
-      setPopperElement(event.currentTarget);
-    }
-    setShowPopper((prev) => !prev);
-  };
+  useEffect(() => {
+    if (!authState.token) return;
+    dispatch(loadData(authState.token, setIsLoading, setAlert));
+  }, [dispatch, authState, setIsLoading]);
 
-  const logout = () => {
-    dispatch(authActions.logout());
-    navigate("/");
-  };
+  useEffect(() => {
+    if (!dataState.user) return;
+
+    let day = 0;
+    let month = 0;
+    let year = 0;
+
+    for (let expense of dataState.user.expenses) {
+      const expenseDate = new Date(expense.date);
+
+      if (expenseDate.getFullYear() === date.getFullYear()) {
+        year += expense.amount;
+      }
+
+      if (
+        expenseDate.getMonth() === date.getMonth() &&
+        expenseDate.getFullYear() === date.getFullYear()
+      ) {
+        month += expense.amount;
+      }
+
+      if (
+        expenseDate.getDay() === date.getDay() &&
+        expenseDate.getMonth() === date.getMonth() &&
+        expenseDate.getFullYear() === date.getFullYear()
+      ) {
+        day += expense.amount;
+      }
+    }
+
+    setTodayAmount(day);
+    setMonthAmount(month);
+    setYearAmount(year);
+  }, [dataState, date]);
+
   useEffect(() => {
     if (!authState.isAuthenticated) navigate("/auth");
   }, [authState, navigate]);
+
+  const onDateChange = () => {
+    console.log(dateRef.current.value);
+    setDate(new Date(dateRef.current.value));
+  };
+
   return (
-    <AnimatedOpacityDiv className={`container ${classes.container}`}>
-      <div className={`row`}>
-        <div
-          className={`col col-md-4 my-auto ${classes["menu-icon__container"]}`}
-        >
-          <FontAwesomeIcon className={classes["menu-icon"]} icon={faBars} />
-        </div>
-        <div className={`col d-none d-md-block`}>
-          <div className={classes.title}>DashBoard</div>
-        </div>
-        <div className={`col col-md-4 my-auto ${classes["login-status__col"]}`}>
-          <div
-            onClick={togglePopper}
-            className={classes["login-status__container"]}
-          >
-            <FontAwesomeIcon
-              className={classes["profile-icon"]}
-              icon={faUser}
+    <div>
+      {isLoading ? (
+        <LoadingSpinner className={classes["loading-spinner"]}></LoadingSpinner>
+      ) : (
+        <AnimatedOpacityDiv className={`container ${classes.container}`}>
+          <MainHeader alert={alert} setIsLoading={setIsLoading}></MainHeader>
+          <div className={`${classes["main"]}`}>
+            <input
+              onChange={onDateChange}
+              ref={dateRef}
+              value={date.toISOString().slice(0, 10)}
+              className={classes["date-input"]}
+              type="date"
             />
-            <span>Usama Javed</span>
-            <FontAwesomeIcon
-              className={classes["arrow-icon"]}
-              icon={faChevronDown}
-            />
+            <div className={classes["expense-boxes"]}>
+              <ExpenseTotalItem amount={todayAmount} title={date.getDate()} />
+              <ExpenseTotalItem
+                amount={monthAmount}
+                title={date.toLocaleString("default", { month: "long" })}
+              />
+              <ExpenseTotalItem
+                amount={yearAmount}
+                title={date.getFullYear()}
+              />
+            </div>
           </div>
-        </div>
-        {showPopper && (
-          <MyPopper element={popperElement} placement="bottom">
-            <div className={classes["popper_item"]}>
-              <div> Profile</div>
-              <FontAwesomeIcon
-                className={classes["popper_item__icon"]}
-                icon={faUser}
-              />
-            </div>
-            <div onClick={logout} className={classes["popper_item"]}>
-              <div> Logout</div>
-              <FontAwesomeIcon
-                className={classes["popper_item__icon"]}
-                icon={faSignOut}
-              />
-            </div>
-          </MyPopper>
-        )}
-      </div>
-    </AnimatedOpacityDiv>
+        </AnimatedOpacityDiv>
+      )}
+    </div>
   );
 };
 

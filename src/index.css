@@ -13,6 +13,10 @@ body {
   --primary-color: #810ca8;
   --secondary-color: #253237;
 
+  /* Box Shadow color */
+
+  --secondary-shadow-color: rgba(24, 32, 37, 0.7);
+
   /* Border Radius */
   --radius-normal: 10px;
   --radius-low: 5px;
