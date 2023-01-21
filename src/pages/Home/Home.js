@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import moment from "moment";
 
 import { loadData } from "../../store/dataSlice";
 import MainHeader from "../../Components/MainHeader/MainHeader";
@@ -12,7 +13,7 @@ import classes from "./Home.module.css";
 const Home = (props) => {
   const [isLoading, setIsLoading] = useState(true);
   const [alert, setAlert] = useState(null);
-  const [date, setDate] = useState(new Date());
+  const [date, setDate] = useState(moment());
 
   const [todayAmount, setTodayAmount] = useState(0);
   const [monthAmount, setMonthAmount] = useState(0);
@@ -37,24 +38,29 @@ const Home = (props) => {
     let month = 0;
     let year = 0;
 
+    
     for (let expense of dataState.user.expenses) {
-      const expenseDate = new Date(expense.date);
-
-      if (expenseDate.getFullYear() === date.getFullYear()) {
+      const expenseDate = moment(expense.date);
+      console.log(
+        expenseDate.format("D"),
+        expenseDate.format("M"),
+        expenseDate.format("YYYY")
+      );
+      if (expenseDate.format("YYYY") === date.format("YYYY")) {
         year += expense.amount;
       }
 
       if (
-        expenseDate.getMonth() === date.getMonth() &&
-        expenseDate.getFullYear() === date.getFullYear()
+        expenseDate.format("M") === date.format("M") &&
+        expenseDate.format("YYYY") === date.format("YYYY")
       ) {
         month += expense.amount;
       }
 
       if (
-        expenseDate.getDay() === date.getDay() &&
-        expenseDate.getMonth() === date.getMonth() &&
-        expenseDate.getFullYear() === date.getFullYear()
+        expenseDate.format("D") === date.format("D") &&
+        expenseDate.format("M") === date.format("M") &&
+        expenseDate.format("YYYY") === date.format("YYYY")
       ) {
         day += expense.amount;
       }
@@ -70,8 +76,7 @@ const Home = (props) => {
   }, [authState, navigate]);
 
   const onDateChange = () => {
-    console.log(dateRef.current.value);
-    setDate(new Date(dateRef.current.value));
+    setDate(moment(dateRef.current.value));
   };
 
   return (
@@ -85,19 +90,19 @@ const Home = (props) => {
             <input
               onChange={onDateChange}
               ref={dateRef}
-              value={date.toISOString().slice(0, 10)}
+              value={date.format("YYYY-MM-DD")}
               className={classes["date-input"]}
               type="date"
             />
             <div className={classes["expense-boxes"]}>
-              <ExpenseTotalItem amount={todayAmount} title={date.getDate()} />
+              <ExpenseTotalItem amount={todayAmount} title={date.format("D MMMM YYYY")} />
               <ExpenseTotalItem
                 amount={monthAmount}
-                title={date.toLocaleString("default", { month: "long" })}
+                title={date.format("MMMM")}
               />
               <ExpenseTotalItem
                 amount={yearAmount}
-                title={date.getFullYear()}
+                title={date.format("YYYY")}
               />
             </div>
           </div>

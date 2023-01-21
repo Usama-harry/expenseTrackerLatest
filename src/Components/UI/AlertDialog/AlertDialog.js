@@ -15,7 +15,7 @@ const AlertDialog = (props) => {
       <div className={classes.container}>
         <div
           style={{
-            "background-color": props.isError ? "red" : "green",
+            backgroundColor: props.isError ? "red" : "green",
           }}
           className={classes["statusIcon__container"]}
         >

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import Api from "../Utils/api";
+import Api from "../Utils/firebase";
 
 const dataSlice = createSlice({
   name: "data",
